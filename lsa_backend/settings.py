@@ -130,3 +130,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+VERIFICATION_SERVICE_URL = os.getenv('VERIFICATION_SERVICE_URL',)
+VERIFICATION_SERVICE_TIMEOUT = os.getenv('VERIFICATION_SERVICE_TIMEOUT',cast=float)
+ENABLE_EXTERNAL_VERIFICATION = os.getenv('ENABLE_EXTERNAL_VERIFICATION', cast=bool)
