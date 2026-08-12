@@ -5,3 +5,5 @@ python-decouple==3.8
 pytest==8.3.4
 pytest-django==4.9.0
 requests==2.32.3
+dj_database_url==3.1.2
+dotenv==0.9.9
