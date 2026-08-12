@@ -1,0 +1,66 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: learning_support_assistent_service_user
+          POSTGRES_PASSWORD: SQqGInbELd4TfCiZFLhoAPHFrwdS5eee
+          POSTGRES_DB: learning_support_assistent_service
+        ports:
+          - 5432:5432
+        # Wait for Postgres to be ready before the job proceeds.
+        options: >-
+          --health-cmd "pg_isready -U learning_support_assistent_service_user"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      SECRET_KEY: django-insecure-m-xvw5)3zfqgs%iva9uu^u7qa47jt9#6z2wk(-m_*ztp$dgd)^
+      DEBUG: "False"
+      ALLOWED_HOSTS: localhost,127.0.0.1,testserver
+      DATABASE_URL: postgresql://learning_support_assistent_service_user:SQqGInbELd4TfCiZFLhoAPHFrwdS5eee@dpg-d9tuk5740ujc73f61nqg-a.ohio-postgres.render.com/learning_support_assistent_service
+      TIME_ZONE: UTC
+      VERIFICATION_SERVICE_URL: https://mock-verification.example.com/api/verify
+      VERIFICATION_SERVICE_TIMEOUT: "5"
+      ENABLE_EXTERNAL_VERIFICATION: "False"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Wait for PostgreSQL
+        run: |
+          for i in $(seq 1 30); do
+            pg_isready -h localhost -p 5432 -U learning_support_assistent_service_user && break
+            echo "Waiting for postgres... ($i)"
+            sleep 2
+          done
+
+      - name: Run Django system checks
+        run: python manage.py check
+
+      - name: Run Django migrations
+        run: python manage.py migrate --noinput
+
+      - name: Run pytest
+        run: pytest -v
