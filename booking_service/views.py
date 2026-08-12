@@ -22,9 +22,11 @@ from .serializers import (
     LSASearchQuerySerializer,
 )
 logger = logging.getLogger(__name__)
+
 @api_view(['GET'])
 def working(request):
     return Response({"status": "ok", "service": "lsa-booking"})
+
 class BookingRequestCreateView(APIView):
     def post(self, request):
         serializer = BookingRequestCreateSerializer(data=request.data)
