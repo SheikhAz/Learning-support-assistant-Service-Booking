@@ -141,7 +141,7 @@ class ExternalVerificationServiceTests(TestCase):
         return FakeResponse()
 
     @override_settings(ENABLE_EXTERNAL_VERIFICATION=True)
-    @patch("booking.integrations.verification_service.requests.post")
+    @patch("booking_service.integrations.verification_service.requests.post")
     def test_external_verification_success(self, mock_post):
         mock_post.return_value = self._make_response(200, {"verified": True, "reference_id": "ref-1"})
         booking = services.create_booking(
@@ -151,7 +151,7 @@ class ExternalVerificationServiceTests(TestCase):
         mock_post.assert_called_once()
 
     @override_settings(ENABLE_EXTERNAL_VERIFICATION=True)
-    @patch("booking.integrations.verification_service.requests.post")
+    @patch("booking_service.integrations.verification_service.requests.post")
     def test_external_verification_rejected(self, mock_post):
         mock_post.return_value = self._make_response(200, {"verified": False, "reason": "not eligible"})
         with self.assertRaises(ExternalVerificationFailed):
@@ -161,7 +161,7 @@ class ExternalVerificationServiceTests(TestCase):
         self.assertEqual(BookingRequest.objects.count(), 0)
 
     @override_settings(ENABLE_EXTERNAL_VERIFICATION=True)
-    @patch("booking.integrations.verification_service.requests.post")
+    @patch("booking_service.integrations.verification_service.requests.post")
     def test_external_verification_timeout(self, mock_post):
         mock_post.side_effect = requests.exceptions.Timeout("timed out")
         with self.assertRaises(ExternalVerificationUnavailable):
@@ -170,7 +170,7 @@ class ExternalVerificationServiceTests(TestCase):
             )
 
     @override_settings(ENABLE_EXTERNAL_VERIFICATION=True)
-    @patch("booking.integrations.verification_service.requests.post")
+    @patch("booking_service.integrations.verification_service.requests.post")
     def test_external_verification_connection_error(self, mock_post):
         mock_post.side_effect = requests.exceptions.ConnectionError("refused")
         with self.assertRaises(ExternalVerificationUnavailable):
@@ -179,7 +179,7 @@ class ExternalVerificationServiceTests(TestCase):
             )
 
     @override_settings(ENABLE_EXTERNAL_VERIFICATION=True)
-    @patch("booking.integrations.verification_service.requests.post")
+    @patch("booking_service.integrations.verification_service.requests.post")
     def test_external_verification_non_2xx_response(self, mock_post):
         mock_post.return_value = self._make_response(500, {})
         with self.assertRaises(ExternalVerificationUnavailable):
@@ -188,7 +188,7 @@ class ExternalVerificationServiceTests(TestCase):
             )
 
     @override_settings(ENABLE_EXTERNAL_VERIFICATION=True)
-    @patch("booking.integrations.verification_service.requests.post")
+    @patch("booking_service.integrations.verification_service.requests.post")
     def test_external_verification_invalid_json(self, mock_post):
         mock_post.return_value = self._make_response(200, raise_json_error=True)
         with self.assertRaises(ExternalVerificationUnavailable):
@@ -197,7 +197,7 @@ class ExternalVerificationServiceTests(TestCase):
             )
 
     @override_settings(ENABLE_EXTERNAL_VERIFICATION=True)
-    @patch("booking.integrations.verification_service.requests.post")
+    @patch("booking_service.integrations.verification_service.requests.post")
     def test_external_verification_missing_verified_field(self, mock_post):
         mock_post.return_value = self._make_response(200, {"reference_id": "ref-2"})
         with self.assertRaises(ExternalVerificationUnavailable):

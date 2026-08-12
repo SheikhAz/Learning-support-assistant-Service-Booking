@@ -143,3 +143,4 @@ ENABLE_EXTERNAL_VERIFICATION = (
     os.getenv("ENABLE_EXTERNAL_VERIFICATION", "false").lower()
     in ("true", "1", "yes", "on")
 )
+VERIFICATION_SERVICE_API_KEY = os.getenv('VERIFICATION_SERVICE_API_KEY', default='')

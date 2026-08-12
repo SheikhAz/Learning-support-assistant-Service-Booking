@@ -32,6 +32,7 @@ jobs:
       TIME_ZONE: UTC
       VERIFICATION_SERVICE_URL: https://mock-verification.example.com/api/verify
       VERIFICATION_SERVICE_TIMEOUT: "5"
+      VERIFICATION_SERVICE_API_KEY: 
       ENABLE_EXTERNAL_VERIFICATION: "False"
 
     steps:
